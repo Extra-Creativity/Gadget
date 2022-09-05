@@ -3,9 +3,12 @@
 #include <mutex>
 #include <atomic>
 #include <format>
-#include <thread>
 #include <algorithm>
 #include <chrono>
+
+// for test purpose
+#include <thread>
+#include <random>
 
 // Lock-needed version.
 class ProgressBar
@@ -66,6 +69,10 @@ private:
 };
 
 // Lock-free version
+// Some atomic operations are tagged with memory order.
+// Compared with seq_cst, this may slightly boost performance.
+// e.g. power gcc 12.1, this will make several sync be lwsync(light weight sync) or disappear.
+// see https://godbolt.org/z/dWGan9Tf6 and change between two versions.
 class ProgressBar
 {
 public:
